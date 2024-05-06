@@ -1,20 +1,153 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Image, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import Modal from './components/modal';
 
 export default function App() {
+  const [objectifs, setObjectifs] = useState(['Réussir', 'Solitude', 'Amour', 'Tuerie', 'Killer']);
+  const [nouvelObjectif, setNouvelObjectif] = useState('');
+  const [selectedObjectifIndex, setSelectedObjectifIndex] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const ajouterObjectif = () => {
+    const nouveauxObjectifs = objectifs.slice(); 
+    nouveauxObjectifs.push(nouvelObjectif); 
+    setObjectifs(nouveauxObjectifs); 
+    setNouvelObjectif(''); 
+  }
+
+  const supprimerObjectif = (index) => {
+    setSelectedObjectifIndex(index);
+    setModalVisible(true);
+  }
+
+  const handleDeleteConfirmation = () => {
+    if (selectedObjectifIndex !== null) {
+      const nouveauxObjectifs = objectifs.slice(); 
+      nouveauxObjectifs.splice(selectedObjectifIndex, 1);
+      setObjectifs(nouveauxObjectifs);
+      setSelectedObjectifIndex(null);
+      setModalVisible(false);
+    }
+  }
+
+  
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Todo Liste App</Text>
+        <Image
+          style={styles.image}
+          source={{
+            uri: 'https://user-images.githubusercontent.com/69080584/119517399-c6f10280-bda1-11eb-9af9-4bdc197dcd65.png',
+          }}
+        />
+      </View>
+
+      <View style={styles.blueBackground}>
+
+        <TextInput
+          style={styles.TextInputAjout}
+          placeholder="Entrez votre objectif"
+          value={nouvelObjectif}
+          onChangeText={text => setNouvelObjectif(text)}
+        />
+        <TouchableOpacity onPress={ajouterObjectif} style={styles.buttonAjout}>
+          <Text style={styles.buttonText}>Ajouter</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal visible={modalVisible} onClose={() => setModalVisible(false)} onDelete={handleDeleteConfirmation} />
+
+      {objectifs.map((objectif, index) => (
+        <View key={index} style={styles.card}>
+          <Text style={styles.objectif}>{objectif}</Text>
+          <TouchableOpacity onPress={() => supprimerObjectif(index)} style={styles.buttonSupprimer}>
+            <Text style={styles.buttonText}>
+              <Image
+                style={styles.imageDelete}
+                source={{
+                  uri: 'https://cdn-icons-png.flaticon.com/512/4140/4140207.png',
+                }}
+              />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+
     </View>
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#E3E3E3',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  blueBackground: {
+    padding: 50,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  image: {
+    width: 50,
+    height: 50,
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  TextInputAjout: {
+    height: 40,
+    width: 200,
+    borderColor: 'transparent',
+    borderWidth: 1,
+    padding: 10,
+    backgroundColor: 'white', 
+    borderRadius: 5, 
+  },  
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 8,
+    backgroundColor: '#f0f0f0',
+    width: '80%',
+    marginBottom: 15,
+    borderRadius: 10,
+    height: 65,
+  },
+  objectif: {
+    color: 'black',
+    fontSize: 18,
+  },
+  buttonAjout: {
+    backgroundColor: '#6693D0',
+    padding: 10,
+    borderRadius: 5,
+    width: 80,
+    alignItems: 'center',
+  },
+  imageDelete: {
+    width: 35,
+    height: 35,
+  },
+  buttonSupprimer: {
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
   },
 });
