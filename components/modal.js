@@ -17,8 +17,8 @@ const Modale = ({ visible, onClose, onDelete }) => {
             style={[styles.button, styles.buttonClose]}
             onPress={() => onClose()}>
             <Text style={styles.textStyle}>Annuler</Text>
-          </Pressable>
-          <Pressable
+            </Pressable>
+            <Pressable
             style={[styles.button, styles.buttonDelete]}
             onPress={() => {
             onDelete();
